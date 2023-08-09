@@ -1,4 +1,4 @@
-import { isString } from '@antv/util';
+import { isString, uniqueId } from '@antv/util';
 import { createDom, modifyCSS } from '@antv/dom-util';
 import Item from 'item/item';
 import insertCss from 'insert-css';
@@ -64,6 +64,7 @@ export default class Menu extends Base {
 
   public getDefaultCfgs(): MenuConfig {
     return {
+      key: `menu-${uniqueId()}`,
       offsetX: 6,
       offsetY: 6,
       handleMenuClick: undefined,

@@ -585,14 +585,16 @@ export class ItemController {
         if (type === 'edge') {
           item.show(animate);
         } else {
-          let anccestorCollapsed = false;
-          traverseAncestors(graphCore, [item.model], (model) => {
-            if (model.data.collapsed) anccestorCollapsed = true;
-            return anccestorCollapsed;
-          });
-          if (anccestorCollapsed) return;
-          const relatedEdges = graphCore.getRelatedEdges(id);
+          if (graphCore.hasTreeStructure('combo')) {
+            let anccestorCollapsed = false;
+            traverseAncestors(graphCore, [item.model], (model) => {
+              if (model.data.collapsed) anccestorCollapsed = true;
+              return anccestorCollapsed;
+            });
+            if (anccestorCollapsed) return;
+          }
 
+          const relatedEdges = graphCore.getRelatedEdges(id);
           item.show(animate);
           relatedEdges.forEach(({ id: edgeId, source, target }) => {
             if (this.getItemVisible(source) && this.getItemVisible(target))
@@ -818,7 +820,11 @@ export class ItemController {
           );
         }
 
-        if (type !== 'edge' && positionChanged) {
+        if (
+          type !== 'edge' &&
+          positionChanged &&
+          graphCore.hasTreeStructure('combo')
+        ) {
           // force update ancestor combos in the sametime
           let currentAncestor = graphCore.getParent(
             transItem.model.id,

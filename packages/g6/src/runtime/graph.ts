@@ -44,6 +44,7 @@ import {
 } from './controller';
 import { PluginController } from './controller/plugin';
 import Hook from './hooks';
+import { Plugin as PluginBase } from '../types/plugin';
 
 /**
  * Disable CSS parsing for better performance.
@@ -907,7 +908,11 @@ export default class Graph<B extends BehaviorRegistry, T extends ThemeRegistry>
         graphCore,
         theme: specification,
       });
-      this.emit('afteritemchange', { type: itemType, action: 'remove', ids });
+      this.emit('afteritemchange', {
+        type: itemType,
+        action: 'remove',
+        ids: idArr,
+      });
     });
     this.hooks.datachange.emit({
       data,
@@ -1532,11 +1537,16 @@ export default class Graph<B extends BehaviorRegistry, T extends ThemeRegistry>
    * @returns
    * @group Interaction
    */
-  public updatePlugin(plugin: {
-    key: string;
-    type: string;
-    [cfg: string]: unknown;
-  }) {
+  public updatePlugin(
+    plugin:
+      | {
+          key: string;
+          type: string;
+          [cfg: string]: unknown;
+        }
+      | PluginBase,
+  ) {
+    const { plugins } = this.specification;
     const { key } = plugin;
     if (!key) {
       console.warn(
@@ -1544,7 +1554,6 @@ export default class Graph<B extends BehaviorRegistry, T extends ThemeRegistry>
       );
       return;
     }
-    const { plugins } = this.specification;
     if (!plugins) {
       console.warn(
         'Update plugin failed, the plugin to be updated does not exist.',
@@ -1591,12 +1600,13 @@ export default class Graph<B extends BehaviorRegistry, T extends ThemeRegistry>
       onlyDrawKeyShape?: boolean;
       upsertAncestors?: boolean;
     },
+    canvas?: Canvas,
   ): DisplayObject {
     this.hooks.transientupdate.emit({
       type,
       id,
       config,
-      canvas: this.transientCanvas,
+      canvas: canvas || this.transientCanvas,
       graphCore: this.dataController.graphCore,
     });
     return this.itemController.getTransient(String(id));

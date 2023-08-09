@@ -331,12 +331,13 @@ export class DataController {
     const prevEdges = userGraphCore.getAllEdges();
     if (prevNodesAndCombos.length && nodesAndCombos.length) {
       // update the parentId
-      nodesAndCombos.forEach((item) => {
-        const { parentId } = item.data;
-        this.graphCore.getChildren(item.id, 'combo').forEach((child) => {
-          userGraphCore.mergeNodeData(child.id, { parentId });
+      this.graphCore.hasTreeStructure('combo') &&
+        nodesAndCombos.forEach((item) => {
+          const { parentId } = item.data;
+          this.graphCore.getChildren(item.id, 'combo').forEach((child) => {
+            userGraphCore.mergeNodeData(child.id, { parentId });
+          });
         });
-      });
       // remove the node
       userGraphCore.removeNodes(nodesAndCombos.map((node) => node.id));
     }

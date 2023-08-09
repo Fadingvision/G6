@@ -1,5 +1,5 @@
 // TODO: update type define.
-import { isString, isArray } from '@antv/util';
+import { isString, isArray, uniqueId } from '@antv/util';
 import { createDom, modifyCSS } from '@antv/dom-util';
 import insertCss from 'insert-css';
 import { AABB } from '@antv/g';
@@ -81,6 +81,7 @@ export default class Tooltip extends Base {
 
   public getDefaultCfgs(): TooltipConfig {
     return {
+      key: `tooltip-${uniqueId()}`,
       offsetX: 0,
       offsetY: 0,
       getContent: (e) => {

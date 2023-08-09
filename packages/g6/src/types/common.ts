@@ -5,3 +5,10 @@ export type Point = {
   y: number;
   z?: number;
 };
+
+export type Bounds = {
+  min: [number, number, number];
+  max: [number, number, number];
+  center: [number, number, number];
+  halfExtents: [number, number, number];
+};

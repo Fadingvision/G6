@@ -35,6 +35,7 @@ import { CubicHorizonEdge } from './item/edge/cubic-horizon';
 import { CubicVerticalEdge } from './item/edge/cubic-vertical';
 import { Quadratic } from './item/edge/quadratic';
 import { CircleCombo } from './item/combo/circle';
+import Hull from './plugin/hull';
 
 const stdLib = {
   transforms: {
@@ -72,6 +73,7 @@ const stdLib = {
     grid: Grid,
     tooltip: Tooltip,
     menu: Menu,
+    hull: Hull,
   },
   nodes: {
     'circle-node': CircleNode,

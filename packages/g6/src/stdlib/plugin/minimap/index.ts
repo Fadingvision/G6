@@ -1,7 +1,7 @@
 // TODO: update type define.
 // @ts-nocheck
 import { Canvas, Group, Rect, DisplayObject } from '@antv/g';
-import { isString, isNil, each, debounce } from '@antv/util';
+import { isString, isNil, each, debounce, uniqueId } from '@antv/util';
 import { createDom, modifyCSS } from '@antv/dom-util';
 import { IGraph } from '../../../types';
 import { ShapeStyle } from '../../../types/item';
@@ -51,6 +51,7 @@ export default class Minimap extends Base {
 
   public getDefaultCfgs(): MiniMapConfig {
     return {
+      key: `minimap-${uniqueId()}`,
       container: null,
       className: 'g6-minimap',
       viewportClassName: 'g6-minimap-viewport',

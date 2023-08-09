@@ -1,8 +1,9 @@
 import { IGraph } from '../../types';
 import registry from '../../stdlib';
 import { getExtension } from '../../util/extension';
-import { Plugin } from '../../types/plugin';
+import { Plugin as PluginBase } from '../../types/plugin';
 import { IG6GraphEvent } from '../../types/event';
+import { uniqueId } from '@antv/util';
 
 type Listener = (event: IG6GraphEvent) => void;
 
@@ -39,7 +40,8 @@ export class PluginController {
    * @example
    * { 'minimap': Minimap, 'tooltip': Tooltip }
    */
-  private pluginMap: Map<string, { type: string; plugin: Plugin }> = new Map();
+  private pluginMap: Map<string, { type: string; plugin: PluginBase }> =
+    new Map();
 
   /**
    * Listeners added by all current plugins.
@@ -69,9 +71,7 @@ export class PluginController {
     this.pluginMap.clear();
     const { graph } = this;
     const pluginConfigs = graph.getSpecification().plugins || [];
-    pluginConfigs.forEach((config) => {
-      this.initPlugin(config);
-    });
+    pluginConfigs.forEach(this.initPlugin.bind(this));
 
     // 2. Add listeners for each behavior.
     this.listenersMap = {};
@@ -83,11 +83,17 @@ export class PluginController {
 
   private initPlugin(config) {
     const { graph } = this;
+    if (config instanceof PluginBase) {
+      config.init(graph);
+      const key = `plugin-${uniqueId()}`;
+      this.pluginMap.set(key, { type: key, plugin: config });
+      return { key, plugin: config };
+    }
     const Plugin = getExtension(config, registry.useLib, 'plugin');
     const options = typeof config === 'string' ? {} : config;
     const type = typeof config === 'string' ? config : config.type;
     const key = typeof config === 'string' ? config : config.key || type;
-    const plugin = new Plugin(options);
+    const plugin = new Plugin({ ...options, key });
     plugin.init(graph);
     this.pluginMap.set(key, { type, plugin });
     return { key, type, plugin };
@@ -135,7 +141,7 @@ export class PluginController {
     }
   }
 
-  private addListeners = (key: string, plugin: Plugin) => {
+  private addListeners = (key: string, plugin: PluginBase) => {
     const events = plugin.getEvents();
     this.listenersMap[key] = {};
     Object.keys(events).forEach((eventName) => {

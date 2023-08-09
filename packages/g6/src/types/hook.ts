@@ -9,6 +9,7 @@ import { LayoutOptions } from './layout';
 import { NodeModelData } from './node';
 import { ThemeSpecification } from './theme';
 import { GraphTransformOptions } from './view';
+import { Plugin as PluginBase } from './plugin';
 
 export interface IHook<T> {
   name: string;
@@ -91,6 +92,7 @@ export interface Hooks {
     plugins: (
       | string
       | { key: string; type: string; [cfgName: string]: unknown }
+      | PluginBase
     )[];
   }>;
   themechange: IHook<{

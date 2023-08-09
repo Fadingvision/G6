@@ -30,6 +30,7 @@ import { LayoutOptions } from './layout';
 import { ThemeOptionsOf, ThemeRegistry } from './theme';
 
 import { RendererName } from './render';
+import { Plugin } from './plugin';
 
 export interface Specification<
   B extends BehaviorRegistry,
@@ -109,6 +110,7 @@ export interface Specification<
         type: string;
         [cfgName: string]: unknown; // TODO: configs from plugins
       }
+    | Plugin
   )[];
 
   /** theme */
