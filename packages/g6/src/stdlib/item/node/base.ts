@@ -40,7 +40,6 @@ export abstract class BaseNode {
   mergedStyles: NodeShapeStyles | ComboShapeStyles;
   lodStrategy?: LodStrategyObj;
   boundsCache: {
-    keyShapeLocal?: AABB;
     labelShapeGeometry?: AABB;
   };
   // cache the zoom level infomations
@@ -164,10 +163,10 @@ export abstract class BaseNode {
       }
     });
 
-    if (shapeMap.labelShape && this.boundsCache.keyShapeLocal) {
+    if (shapeMap.labelShape) {
       const { maxWidth = '200%' } = this.mergedStyles.labelShape || {};
       this.zoomCache.wordWrapWidth = getWordWrapWidthByBox(
-        this.boundsCache.keyShapeLocal,
+        shapeMap.keyShape.getLocalBounds(),
         maxWidth,
         1,
       );
@@ -222,12 +221,10 @@ export abstract class BaseNode {
     diffState?: { previous: State[]; current: State[] },
   ): DisplayObject {
     const { keyShape } = shapeMap;
-    this.boundsCache.keyShapeLocal =
-      this.boundsCache.keyShapeLocal || keyShape.getLocalBounds();
     const keyShapeBox = getShapeLocalBoundsByStyle(
       keyShape,
       this.mergedStyles.keyShape,
-      this.boundsCache.keyShapeLocal,
+      keyShape.getLocalBounds(),
     );
     const { labelShape: shapeStyle } = this.mergedStyles;
     const {
@@ -445,9 +442,7 @@ export abstract class BaseNode {
       (style) => style.tag === 'anchorShape',
     );
     if (!individualConfigs.length) return;
-    this.boundsCache.keyShapeLocal =
-      this.boundsCache.keyShapeLocal || shapeMap.keyShape.getLocalBounds();
-    const keyShapeBBox = this.boundsCache.keyShapeLocal;
+    const keyShapeBBox = shapeMap.keyShape.getLocalBounds();
     const keyShapeWidth = keyShapeBBox.max[0] - keyShapeBBox.min[0];
     const keyShapeHeight = keyShapeBBox.max[1] - keyShapeBBox.min[1];
 
@@ -489,12 +484,10 @@ export abstract class BaseNode {
       (style) => style.tag === 'badgeShape',
     );
     if (!individualConfigs.length) return {};
-    this.boundsCache.keyShapeLocal =
-      this.boundsCache.keyShapeLocal || shapeMap.keyShape.getLocalBounds();
     const keyShapeBBox = getShapeLocalBoundsByStyle(
       shapeMap.keyShape,
       keyShapeStyle,
-      this.boundsCache.keyShapeLocal,
+      shapeMap.keyShape.getLocalBounds(),
     );
     const keyShapeSize = Math.min(
       keyShapeBBox.max[0] - keyShapeBBox.min[0],
@@ -719,7 +712,7 @@ export abstract class BaseNode {
     const { labelShape: labelStyle } = this.mergedStyles;
     const { position = 'bottom' } = labelStyle;
 
-    const keyShapeLocal = this.boundsCache.keyShapeLocal;
+    const keyShapeLocal = shapeMap.keyShape.getLocalBounds();
     if (zoom < 1) {
       // if it is zoom-out, do not scale the gap between keyShape and labelShape, differentiate from zoom-in by adjusting transformOrigin
       if (position === 'bottom') labelShape.style.transformOrigin = '0';

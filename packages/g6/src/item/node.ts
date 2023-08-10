@@ -242,15 +242,14 @@ export default class Node extends Item {
         intersectPoint = innerPoint;
         break;
       default: {
-        const bbox =
-          this.renderExt.boundsCache?.keyShapeLocal ||
-          keyShape.getLocalBounds();
+        // boundsCache can be removed here since `getBounds` has already done.
+        const bbox = keyShape.getBounds();
         intersectPoint = getRectIntersectByPoint(
           {
-            x: bbox.halfExtents[0],
-            y: bbox.halfExtents[1],
-            width: bbox.max[0] - bbox.min[0],
-            height: bbox.max[1] - bbox.min[1],
+            x: bbox.min[0],
+            y: bbox.min[1],
+            width: bbox.halfExtents[0] * 2,
+            height: bbox.halfExtents[1] * 2,
           },
           point,
         );
@@ -259,11 +258,9 @@ export default class Node extends Item {
 
     let anchorPointsPositions = this.anchorPointsCache;
     if (!anchorPointsPositions) {
-      const keyShapeBBox =
-        this.renderExt.boundsCache?.keyShapeLocal ||
-        this.shapeMap.keyShape.getLocalBounds();
-      const keyShapeWidth = keyShapeBBox.max[0] - keyShapeBBox.min[0];
-      const keyShapeHeight = keyShapeBBox.max[1] - keyShapeBBox.min[1];
+      const keyShapeBBox = this.shapeMap.keyShape.getBounds();
+      const keyShapeWidth = keyShapeBBox.halfExtents[0] * 2;
+      const keyShapeHeight = keyShapeBBox.halfExtents[1] * 2;
       anchorPointsPositions = anchorPoints.map((pointRatio) => {
         const [xRatio, yRatio] = pointRatio;
         return {
