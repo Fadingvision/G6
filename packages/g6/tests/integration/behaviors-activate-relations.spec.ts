@@ -32,8 +32,6 @@ describe('Activate relations behavior', () => {
         'behaviors-activate-relations',
       );
 
-      // @ts-ignore
-      // mouseEvent.target = canvas.getContextService().getDomElement();
       triggerEvent(graph, 'mousedown', 81, 50);
       triggerEvent(graph, 'mouseup', 81, 50);
       await expect(canvas).toMatchCanvasSnapshot(
@@ -75,6 +73,48 @@ describe('Activate relations behavior', () => {
         dir,
         'behaviors-activate-relations',
       );
+      graph.destroy();
+      done();
+    });
+  });
+
+  it.skip('should be rendered correctly with WebGL', (done) => {
+    const dir = `${__dirname}/snapshots/webgl`;
+    const { backgroundCanvas, canvas, transientCanvas, container } =
+      createContext('webgl', 500, 500);
+
+    const graph = activateRelations({
+      container,
+      backgroundCanvas,
+      canvas,
+      transientCanvas,
+      width: 500,
+      height: 500,
+    });
+
+    graph.on('afterlayout', async () => {
+      await expect(canvas).toMatchWebGLSnapshot(
+        dir,
+        'behaviors-activate-relations',
+      );
+
+      triggerEvent(graph, 'mousedown', 81, 50);
+      triggerEvent(graph, 'mouseup', 81, 50);
+      await expect(canvas).toMatchWebGLSnapshot(
+        dir,
+        'behaviors-activate-relations-activate-node1',
+      );
+
+      /**
+       * Click document to clear active state.
+       */
+      triggerEvent(graph, 'mousedown', 0, 0);
+      triggerEvent(graph, 'mouseup', 0, 0);
+      await expect(canvas).toMatchWebGLSnapshot(
+        dir,
+        'behaviors-activate-relations-deactivate-node1',
+      );
+
       graph.destroy();
       done();
     });

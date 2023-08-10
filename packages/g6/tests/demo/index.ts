@@ -32,7 +32,8 @@ import fisheye from './plugins/fisheye';
 import tooltip from './demo/tooltip';
 import comboBasic from './combo/combo-basic';
 import animations_node_build_in from './animations/node-build-in';
-import image_node from './item/node/image-node';
+import node_rect from './item/node/rect';
+import node_image from './item/node/image';
 
 export {
   behaviors_activateRelations,
@@ -69,5 +70,6 @@ export {
   tooltip,
   comboBasic,
   animations_node_build_in,
-  image_node,
+  node_rect,
+  node_image,
 };

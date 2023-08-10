@@ -1,7 +1,9 @@
-import G6 from '../../../src/index';
-import { container, height, width } from '../../datasets/const';
+import { Graph } from '../../../../src/index';
+import { TestCaseContext } from '../../interface';
 
-export default () => {
+export default (context: TestCaseContext) => {
+  const { width, height } = context;
+
   const data = {
     nodes: [
       {
@@ -39,12 +41,10 @@ export default () => {
     ],
   };
 
-  const graph = new G6.Graph({
-    container,
-    width,
-    height,
-    data,
+  const graph = new Graph({
+    ...context,
     type: 'graph',
+    data,
     modes: {
       default: ['click-select', 'drag-canvas', 'zoom-canvas', 'drag-node'],
     },
@@ -68,7 +68,7 @@ export default () => {
           },
           badgeShapes: [
             {
-              text: '123',
+              text: '1',
               position: 'rightTop',
               color: 'blue',
             },
@@ -87,6 +87,5 @@ export default () => {
       };
     },
   });
-
   return graph;
 };
